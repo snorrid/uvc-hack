@@ -153,8 +153,10 @@ info "Installing patched driver to $INSTALLED_KO"
 $SUDO install -D -m 644 uvcvideo.ko "$INSTALLED_KO"
 $SUDO depmod -a "$KVER"
 
-if [ "$(modinfo -k "$KVER" -n uvcvideo 2> /dev/null)" != "$INSTALLED_KO" ]; then
-    warn "modprobe resolves uvcvideo to '$(modinfo -k "$KVER" -n uvcvideo 2> /dev/null)' instead of the patched driver."
+# modinfo lives in /usr/sbin, which is not on a regular user's PATH on Debian.
+RESOLVED_KO="$($SUDO modinfo -k "$KVER" -n uvcvideo 2> /dev/null || true)"
+if [ "$RESOLVED_KO" != "$INSTALLED_KO" ]; then
+    warn "modprobe resolves uvcvideo to '$RESOLVED_KO' instead of the patched driver."
 fi
 
 reload_driver

@@ -48,9 +48,18 @@ Reboot and the patched driver will be used.
 
 ### Check that it worked
 
+Installed for the running kernel:
+
 ```bash
-modinfo -n uvcvideo
+sudo modinfo -n uvcvideo
 # should print /lib/modules/<kernel>/updates/uvc/uvcvideo.ko
+```
+
+Currently loaded (if this says "stock", reboot):
+
+```bash
+[ "$(cat /sys/module/uvcvideo/srcversion)" = "$(sudo modinfo -F srcversion uvcvideo)" ] \
+    && echo "patched driver loaded" || echo "stock driver loaded"
 ```
 
 ## After a kernel upgrade
